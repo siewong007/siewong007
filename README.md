@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="assets/profile.gif" width="180" height="180" alt="Paul Wong" />
-</p>
-
 # Paul Wong
 
 Full-stack software engineer in Malaysia. I ship product systems end-to-end — REST APIs, PostgreSQL, and React UIs — in **Rust (Axum)**, **Java (Spring Boot)**, **Go**, and **TypeScript**. I am completing an MSc in Artificial Intelligence at [Sunway University](https://sunwayuniversity.edu.my/).
