@@ -1,8 +1,8 @@
 # Paul Wong
 
-Full-stack engineer in Malaysia. I ship product systems end-to-end — APIs, data stores, and React UIs — and I am completing an MSc in Artificial Intelligence at [Sunway University](https://sunwayuniversity.edu.my/).
+Full-stack software engineer in Malaysia. I ship product systems end-to-end — REST APIs, PostgreSQL, and React UIs — in **Rust (Axum)**, **Java (Spring Boot)**, **Go**, and **TypeScript**. I am completing an MSc in Artificial Intelligence at [Sunway University](https://sunwayuniversity.edu.my/).
 
-**Open to software engineering roles.**
+**Open to work** — full-stack software engineering roles in Malaysia or remote.
 
 ## Featured work
 
