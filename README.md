@@ -12,7 +12,7 @@ MSc Artificial Intelligence @ [Sunway University](https://sunwayuniversity.edu.m
 I ship product systems end-to-end — APIs, data stores, and React UIs — in Rust, Java, Go, and TypeScript.
 
 <p>
-  <img src="https://skillicons.dev/icons?i=rust,java,go,ts,react,postgres,python,docker,aws" alt="Stack" />
+  <img src="https://skillicons.dev/icons?i=rust,java,go,ts,react,postgres,python,pytorch,tensorflow,docker,aws" alt="Stack" />
 </p>
 
 </div>
@@ -100,7 +100,15 @@ RM invoices with amount-in-words, autosave, XSS-hardened, 192 tests.
 
 <table>
 <tr>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
+
+### [trustrag](https://github.com/siewong007/trustrag)
+Lakehouse-native hallucination detection for RAG — supervised detectors vs LLM-as-a-judge. A PyTorch cross-encoder reaches near-parity F1 (0.958 vs 0.969) at ~25x lower p95 latency (212 ms vs 5,207 ms).
+
+`PyTorch` `TensorFlow` `Transformers` `FAISS` `Databricks` `MLflow`
+
+</td>
+<td width="50%" valign="top">
 
 ### [agent-kv-retention](https://github.com/siewong007/agent-kv-retention)
 MSc thesis — KV-cache retention for LLM agents, costed in ringgit not hit rate.
@@ -108,15 +116,17 @@ MSc thesis — KV-cache retention for LLM agents, costed in ringgit not hit rate
 `Python` `vLLM` `LLM`
 
 </td>
-<td width="33%" valign="top">
+</tr>
+<tr>
+<td width="50%" valign="top">
 
 ### [mlops-credit-card-fraud-detection](https://github.com/siewong007/mlops-credit-card-fraud-detection)
 Reproducible fraud pipeline — Pandera, MLflow, DVC, SHAP, Evidently.
 
-[`Docs site`](https://siewong007.github.io/mlops-credit-card-fraud-detection/) · `Python` `MLOps`
+[`Docs site`](https://siewong007.github.io/mlops-credit-card-fraud-detection/) · `Python` `XGBoost` `MLOps`
 
 </td>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
 ### [ai-trading-platform](https://github.com/siewong007/ai-trading-platform)
 Binance spot research lab — EMA / RSI, ATR stops, pre-registered backtest gate.
@@ -127,6 +137,21 @@ Binance spot research lab — EMA / RSI, ATR stops, pre-registered backtest gate
 </tr>
 </table>
 
+## Deep learning toolkit
+
+What I actually build models with, and where each of these is used in the repos above.
+
+| Area | Tools | Used in |
+|---|---|---|
+| **Training frameworks** | PyTorch · TensorFlow / Keras | `trustrag` — a DeBERTa-v3 cross-encoder in PyTorch and a Keras NLI fact-checker, trained on the same labels so the two stacks compare like for like |
+| **Transformers & embeddings** | Hugging Face Transformers · Datasets · sentence-transformers · accelerate | `trustrag` — grounded generation (Qwen2.5-1.5B / SmolLM2), claim decomposition, corpus embedding |
+| **Retrieval** | FAISS · BM25 (rank-bm25) · RRF fusion · cross-encoder reranking | `trustrag` — hybrid dense + sparse retrieval feeding the RAG pipeline |
+| **LLM serving & inference** | vLLM · KV-cache paging & admission policies | `agent-kv-retention` — retention policies validated against real vLLM serving behaviour |
+| **Classical ML** | scikit-learn · XGBoost · SHAP | `mlops-credit-card-fraud-detection` — gradient-boosted fraud model with explanations |
+| **Experiment tracking & data** | MLflow · DVC · Pandera · Evidently | `trustrag`, `mlops-credit-card-fraud-detection` — runs, artefacts, schema contracts, drift |
+| **Distributed / lakehouse** | Databricks · Delta Lake · Spark | `trustrag` — Delta tables for corpus, chunks, traces and results; Spark batch embedding |
+| **Evaluation** | P/R/F1 · AUROC · Cohen's κ · p95 latency · cost per 1k claims | `trustrag` — accuracy is never reported without the cost and latency next to it |
+
 ---
 
 <div align="center">
@@ -135,8 +160,9 @@ Binance spot research lab — EMA / RSI, ATR stops, pre-registered backtest gate
 
 **Backend** — Rust (Axum) · Java (Spring Boot) · Go  
 **Frontend** — TypeScript · React · Vite · Tauri  
-**Data** — PostgreSQL · Redis · SQLite  
-**ML / ops** — Python · MLflow · DVC · Docker · GitHub Actions · Terraform
+**Data** — PostgreSQL · Redis · SQLite · Delta Lake  
+**Deep learning** — PyTorch · TensorFlow / Keras · Hugging Face · FAISS · vLLM  
+**ML / ops** — Python · MLflow · DVC · Databricks · Docker · GitHub Actions · Terraform
 
 [LinkedIn](https://www.linkedin.com/in/paul-wong-02864a19a) · [GitHub](https://github.com/siewong007)
 
