@@ -2,167 +2,127 @@
 
 # Paul Wong
 
-**Full-stack software engineer** · Malaysia  
-MSc Artificial Intelligence @ [Sunway University](https://sunwayuniversity.edu.my/)
+**Full-stack engineer — backend-leaning.** Rust · Java · Go · TypeScript  
+Malaysia (UTC+8) · MSc Artificial Intelligence, [Sunway University](https://sunwayuniversity.edu.my/)
 
-[![Open to work](https://img.shields.io/badge/Open_to_work-full--stack-0a7d32?style=for-the-badge)](https://www.linkedin.com/in/paul-wong-02864a19a)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Paul_Wong-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/paul-wong-02864a19a)
-[![GitHub](https://img.shields.io/badge/GitHub-siewong007-181717?style=for-the-badge&logo=github)](https://github.com/siewong007)
-
-I ship product systems end-to-end — APIs, data stores, and React UIs — in Rust, Java, Go, and TypeScript.
-
-<p>
-  <img src="https://skillicons.dev/icons?i=rust,java,go,ts,react,postgres,python,pytorch,tensorflow,docker,aws" alt="Stack" />
-</p>
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Paul_Wong-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/paul-wong-02864a19a)
+[![Open to full-stack roles](https://img.shields.io/badge/Open_to-full--stack_roles-0a7d32?style=flat-square)](https://www.linkedin.com/in/paul-wong-02864a19a)
 
 </div>
 
+I build transactional business systems — the kind where a wrong number is a real problem.
+Payroll that has to match statutory law, hotel ledgers that have to balance, stock that must
+never go negative. Most of my code is Rust and Java on PostgreSQL, with React in front of it.
+
+The through-line in the work below is **correctness under money and compliance**: integer-cent
+arithmetic instead of floats, invariants enforced in the database rather than only in handlers,
+characterization tests pinned around billing paths, and calculations that fail loudly rather
+than silently returning zero.
+
 ---
 
-## Product systems
+## Flagship work
 
-<table>
-<tr>
-<td width="50%" valign="top">
+### [hotel-app](https://github.com/siewong007/hotel-app) — hotel property management
 
-### [payroll-system](https://github.com/siewong007/payroll-system)
-Malaysian SME payroll & HR — EPF / SOCSO / EIS / PCB, approvals, attendance.
+*Nine months of continuous development: 864 commits, Nov 2025 → Aug 2026.*
 
-`Rust` `Axum` `React` `PostgreSQL` `WebAuthn`
+A full PMS: reservations, folios, rates, housekeeping, guest portal, staff RBAC, plus a Tauri
+desktop build. ~104k lines of Rust and ~87k of TypeScript across 185 API routes and 98 tables.
 
-</td>
-<td width="50%" valign="top">
+The part I would point a reviewer at is the money handling. Billing, ledger and invoice totals
+are locked down by **characterization tests** — `payment_characterization.rs`,
+`ledger_characterization.rs`, `invoice_total_characterization.rs` — that pin existing financial
+behaviour before it can be refactored, so a change that alters a total fails the build instead
+of quietly shipping. An `openapi_drift` test fails CI when the spec and the router disagree.
 
-### [hotel-app](https://github.com/siewong007/hotel-app)
-Hotel administration — rooms, bookings, staff RBAC, Tauri desktop shell.
+`Rust` `Axum` `React` `Tauri` `PostgreSQL` · 5 CI workflows
 
-`Rust` `Axum` `React` `Tauri` `PostgreSQL`
+### [payroll-system](https://github.com/siewong007/payroll-system) — Malaysian SME payroll & HR
 
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+*238 commits over five months.*
 
-### [hotel-app-spring](https://github.com/siewong007/hotel-app-spring)
-Feature-identical Spring Boot port of hotel-app — 270 endpoints, JWT + RBAC.
+Multi-company payroll: EPF / SOCSO / EIS, attendance with geofenced kiosk check-in, approvals,
+payslip and EA exports. 234 endpoints, 57 tables, 63k lines of Rust.
 
-`Java` `Spring Boot` `React` `PostgreSQL`
+Three decisions worth the click:
 
-</td>
-<td width="50%" valign="top">
+- **Statutory calculation fails closed.** A payroll run refuses to execute unless an
+  effective-dated, source-linked, verified rule set covers the period. Automatic PCB is
+  hard-disabled outside tests pending LHDN conformance — a missing rate raises an error instead
+  of becoming a zero deduction.
+- **Tenancy is enforced by the schema.** Employee child tables carry a composite
+  `(company_id, id)` foreign key, with `NOT NULL` load-bearing because a composite FK is
+  `MATCH SIMPLE` and a null tenant would silently skip the check.
+- **488 SQL queries are verified at compile time** via SQLx's offline cache, re-checked in CI so
+  a stale cache cannot pass. Money moves as integer sen, never `f64`.
 
-### [banking-app](https://github.com/siewong007/banking-app)
-Personal banking & finance with passkeys and fraud / insights MCP servers.
+`Rust` `Axum` `React` `PostgreSQL` `Terraform` · CI actions pinned to commit SHAs
 
-`Rust` `Axum` `React` `WebAuthn` `PostgreSQL`
+### [online-shopping-platform](https://github.com/siewong007/online-shopping-platform) — storefront + admin console
 
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+*106 commits, actively developed Apr → Aug 2026.*
 
-### [inventory-crm](https://github.com/siewong007/inventory-crm)
-Multi-warehouse inventory CRM — purchase / sales orders, auto stock moves.
+Catalog, cart, checkout, memberships, reviews, vouchers, support chat, and an operations console.
+84 endpoints, 59 tables, 39 migrations.
 
-`Go` `React` `PostgreSQL`
+Operationally the most disciplined thing I have built: **146 Rust tests enumerated by the
+compiler** (86 of them against a real Postgres) plus 67 frontend tests, CI gating on
+`clippy -D warnings`, a SHA-256 migration ledger that fails closed on schema drift, HMAC-verified
+idempotent payment webhooks, and a backup process that proves itself — it encrypts, ships
+off-site, downloads the object back, restores it into a throwaway container and asserts
+row-count parity before reporting success. 34 `SELECT … FOR UPDATE` row locks guard the order
+and inventory paths.
 
-</td>
-<td width="50%" valign="top">
+`Rust` `Axum` `SQLx` `React` `PostgreSQL` `Docker` `Caddy`
 
-### [online-shopping-platform](https://github.com/siewong007/online-shopping-platform)
-Ecommerce storefront and API — catalog, orders, PostgreSQL.
+---
 
-`Rust` `Axum` `React` `PostgreSQL`
+## The same product, twice
 
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
+[**hotel-app-spring**](https://github.com/siewong007/hotel-app-spring) re-implements the hotel API
+in Spring Boot 4 / Java 21 — 94 JPA entities, 292 route mappings, session-bound JWT with
+refresh-token rotation proven by Testcontainers integration tests.
 
-### [airtasker](https://github.com/siewong007/airtasker)
-Task marketplace — JWT auth, WebSocket chat, escrow-style payments.
+The claim is falsifiable on purpose: a parity checker diffs every `@*Mapping` against the Rust
+router's 270-endpoint inventory and exits non-zero on any gap. Porting the same domain across two
+type systems is the clearest evidence I can give that I understand the domain rather than the
+framework.
 
-`Java` `Spring Boot` `React` `PostgreSQL`
+---
 
-</td>
-<td width="50%" valign="top">
+## Also shipped
 
-### [invoice-generator](https://github.com/siewong007/invoice-generator)
-RM invoices with amount-in-words, autosave, XSS-hardened, 192 tests.
+| Project | What it is | Stack |
+|---|---|---|
+| [inventory-crm](https://github.com/siewong007/inventory-crm) | Multi-warehouse inventory and orders. Stock cannot go negative — a DB `CHECK`, `SELECT FOR UPDATE`, and advisory locks for document numbering enforce it, with a 63-check end-to-end suite. | `Go` `chi` `React` `PostgreSQL` |
+| [ai-trading-platform](https://github.com/siewong007/ai-trading-platform) | Binance spot research lab — EMA/RSI with ATR stops behind a pre-registered backtest gate that stays research-only until a stored PASS. 8.7k lines of Rust, 148 tests. | `Rust` `SQLite` |
+| [banking-app](https://github.com/siewong007/banking-app) | Personal finance API with a hand-written WebAuthn passkey ceremony — DB-persisted, single-use, five-minute challenges — over a 42-migration schema. *Work in progress: many routes are still stubs.* | `Rust` `Axum` `WebAuthn` |
+| [airtasker](https://github.com/siewong007/airtasker) | Two-sided task marketplace — accepting an offer atomically rejects competitors, STOMP chat, escrow-style payments. *Prototype.* | `Java` `Spring Boot` `React` |
+| [invoice-generator](https://github.com/siewong007/invoice-generator) | Client-side RM invoicing with amount-in-words totals. Every field is driven with live XSS payloads, then asserted on three independent DOM invariants. | `TypeScript` `React` `Vitest` |
 
-`TypeScript` `React` `Vitest`
-
-</td>
-</tr>
-</table>
+---
 
 ## Research & ML
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### [trustrag](https://github.com/siewong007/trustrag)
-Lakehouse-native hallucination detection for RAG — supervised detectors vs LLM-as-a-judge. A PyTorch cross-encoder reaches near-parity F1 (0.958 vs 0.969) at ~25x lower p95 latency (212 ms vs 5,207 ms).
-
-`PyTorch` `TensorFlow` `Transformers` `FAISS` `Databricks` `MLflow`
-
-</td>
-<td width="50%" valign="top">
-
-### [agent-kv-retention](https://github.com/siewong007/agent-kv-retention)
-MSc thesis — KV-cache retention for LLM agents, costed in ringgit not hit rate.
-
-`Python` `vLLM` `LLM`
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-### [mlops-credit-card-fraud-detection](https://github.com/siewong007/mlops-credit-card-fraud-detection)
-Reproducible fraud pipeline — Pandera, MLflow, DVC, SHAP, Evidently.
-
-[`Docs site`](https://siewong007.github.io/mlops-credit-card-fraud-detection/) · `Python` `XGBoost` `MLOps`
-
-</td>
-<td width="50%" valign="top">
-
-### [ai-trading-platform](https://github.com/siewong007/ai-trading-platform)
-Binance spot research lab — EMA / RSI, ATR stops, pre-registered backtest gate.
-
-`Rust` `SQLite` `research-only`
-
-</td>
-</tr>
-</table>
-
-## Deep learning toolkit
-
-What I actually build models with, and where each of these is used in the repos above.
-
-| Area | Tools | Used in |
-|---|---|---|
-| **Training frameworks** | PyTorch · TensorFlow / Keras | `trustrag` — a DeBERTa-v3 cross-encoder in PyTorch and a Keras NLI fact-checker, trained on the same labels so the two stacks compare like for like |
-| **Transformers & embeddings** | Hugging Face Transformers · Datasets · sentence-transformers · accelerate | `trustrag` — grounded generation (Qwen2.5-1.5B / SmolLM2), claim decomposition, corpus embedding |
-| **Retrieval** | FAISS · BM25 (rank-bm25) · RRF fusion · cross-encoder reranking | `trustrag` — hybrid dense + sparse retrieval feeding the RAG pipeline |
-| **LLM serving & inference** | vLLM · KV-cache paging & admission policies | `agent-kv-retention` — retention policies validated against real vLLM serving behaviour |
-| **Classical ML** | scikit-learn · XGBoost · SHAP | `mlops-credit-card-fraud-detection` — gradient-boosted fraud model with explanations |
-| **Experiment tracking & data** | MLflow · DVC · Pandera · Evidently | `trustrag`, `mlops-credit-card-fraud-detection` — runs, artefacts, schema contracts, drift |
-| **Distributed / lakehouse** | Databricks · Delta Lake · Spark | `trustrag` — Delta tables for corpus, chunks, traces and results; Spark batch embedding |
-| **Evaluation** | P/R/F1 · AUROC · Cohen's κ · p95 latency · cost per 1k claims | `trustrag` — accuracy is never reported without the cost and latency next to it |
+| Project | Focus |
+|---|---|
+| [mlops-credit-card-fraud-detection](https://github.com/siewong007/mlops-credit-card-fraud-detection) | End-to-end reproducible fraud pipeline — DVC, MLflow, Pandera schema contracts, SHAP, Evidently drift monitoring. 110 tests, two CI workflows, [published docs site](https://siewong007.github.io/mlops-credit-card-fraud-detection/). |
+| [agent-kv-retention](https://github.com/siewong007/agent-kv-retention) | MSc thesis — KV-cache retention policies for LLM agent workloads. CPU simulator calibrated against vLLM + Qwen2.5-3B, falsification-first design, cost reported in ringgit rather than hit rate. |
+| [vantage-pipeline](https://github.com/siewong007/vantage-pipeline) | Local AI video generation, measured rather than asserted. Found the export path was destroying more quality than any model-side lever could recover, and that the quality metric itself ranked worse images higher — both fixed, both falsified against known-bad inputs. |
+| [trustrag](https://github.com/siewong007/trustrag) | *In progress.* Hallucination detection for RAG on a Databricks lakehouse — supervised cross-encoder detectors compared against LLM-as-a-judge on accuracy, latency and cost together. |
 
 ---
 
+## Stack
+
+**Daily** — Rust (Axum, SQLx, Tokio) · TypeScript / React · PostgreSQL · Docker · GitHub Actions  
+**Comfortable** — Java (Spring Boot, JPA) · Go (chi, pgx) · Python · Redis · SQLite · Tauri · Terraform  
+**ML** — PyTorch · scikit-learn / XGBoost · Hugging Face · MLflow · DVC · vLLM
+
 <div align="center">
 
-### Stack
-
-**Backend** — Rust (Axum) · Java (Spring Boot) · Go  
-**Frontend** — TypeScript · React · Vite · Tauri  
-**Data** — PostgreSQL · Redis · SQLite · Delta Lake  
-**Deep learning** — PyTorch · TensorFlow / Keras · Hugging Face · FAISS · vLLM  
-**ML / ops** — Python · MLflow · DVC · Databricks · Docker · GitHub Actions · Terraform
+Open to full-stack and backend roles, remote or Malaysia-based.
 
 [LinkedIn](https://www.linkedin.com/in/paul-wong-02864a19a) · [GitHub](https://github.com/siewong007)
 
