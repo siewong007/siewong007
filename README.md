@@ -8,6 +8,10 @@ Malaysia (UTC+8) · MSc Artificial Intelligence, [Sunway University](https://sun
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Paul_Wong-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/paul-wong-02864a19a)
 [![Open to full-stack roles](https://img.shields.io/badge/Open_to-full--stack_roles-0a7d32?style=flat-square)](https://www.linkedin.com/in/paul-wong-02864a19a)
 
+<p>
+  <img src="https://skillicons.dev/icons?i=rust,java,spring,go,ts,react,postgres,redis,docker,githubactions,terraform,aws,python,pytorch&perline=7" alt="Rust, Java, Spring, Go, TypeScript, React, PostgreSQL, Redis, Docker, GitHub Actions, Terraform, AWS, Python, PyTorch" />
+</p>
+
 </div>
 
 I build transactional business systems — the kind where a wrong number is a real problem.
